@@ -562,7 +562,6 @@ IMGUI_IMPL_API int ImGui_ImplX11_EventHandler(XEvent &event, XEvent* next_event)
                     if( is_key_down )
                         io.AddMouseWheelEvent(0, -1);
                     break;
-
             }
         }
         return 0;
@@ -597,7 +596,9 @@ IMGUI_IMPL_API int ImGui_ImplX11_EventHandler(XEvent &event, XEvent* next_event)
             io.AddMousePosEvent(-FLT_MAX, -FLT_MAX);
 
         case FocusIn:
+            // False because we don't always receive MotionNotify
             bd->MouseTracked = false;
+            io.SetAppAcceptingEvents(event.type == FocusIn);
             io.AddFocusEvent(event.type == FocusIn);
             return 0;
 
@@ -607,9 +608,7 @@ IMGUI_IMPL_API int ImGui_ImplX11_EventHandler(XEvent &event, XEvent* next_event)
             return 0;
 
         case SelectionRequest:
-        {
             ImGui_ImplX11_SendClipboard(&event.xselectionrequest);
-        }
     }
     return 0;
 }
